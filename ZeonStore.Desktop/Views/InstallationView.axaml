@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ZeonStore.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:InstallationViewModel"
+             x:Class="ZeonStore.Views.InstallationView">
+
+  <DockPanel IsVisible="{Binding IsInstalling}"
+                             Margin="0,10,0,0">
+    <Button Margin="5,0,0,0" DockPanel.Dock="Right" Command="{Binding CancelCommand}">
+      <Image Source="{SvgImage /Assets/x-lg.svg}" Height="19"/>
+    </Button>
+    <Button Margin="5,0,0,0" DockPanel.Dock="Right" Command="{Binding TogglePauseCommand}">
+      <Panel>
+        <Image Source="{SvgImage /Assets/play.svg}" Height="19" IsVisible="{Binding IsPaused}"/>
+        <Image Source="{SvgImage /Assets/pause.svg}" Height="19" IsVisible="{Binding !IsPaused}"/>
+      </Panel>
+    </Button>
+    <ProgressBar Height="30" Value="{Binding InstallProgress}" ShowProgressText="True"/>
+  </DockPanel>
+</UserControl>

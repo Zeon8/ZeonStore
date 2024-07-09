@@ -1,0 +1,73 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ZeonStore.ViewModels" xmlns:system="using:System"
+             xmlns:locales="using:ZeonStore.Desktop.Locales"
+             xmlns:views="using:ZeonStore.Views" xmlns:imageLoader="using:AsyncImageLoader"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:AppViewModel"
+             x:Class="ZeonStore.Views.AppView">
+  <Design.DataContext>
+    <vm:AppViewModel/>
+  </Design.DataContext>
+  <Panel>
+    <Button Command="{Binding ReturnBackCommand}" Margin="20,10" VerticalAlignment="Top">
+      <Image Source="{SvgImage /Assets/chevron-left.svg}" Height="16"/>
+    </Button>
+    <ScrollViewer Margin="0,50">
+      <StackPanel Margin="20">
+        <StackPanel Orientation="Horizontal" DataContext="{Binding Application}">
+          <Image imageLoader:ImageLoader.Source="{Binding IconUrl}" Source="/Assets/avalonia-logo.ico" Height="150"/>
+          <StackPanel Margin="10,0" Spacing="10" >
+            <TextBlock Text="{Binding Name, FallbackValue=Title}" FontSize="24"/>
+            <TextBlock Text="{Binding PublisherName, FallbackValue=Publisher}" Foreground="Gray" FontSize="16"/>
+            <TextBlock Text="{Binding ShortDescription, FallbackValue=Short Description}" FontSize="16" TextWrapping="Wrap"/>
+          </StackPanel>
+        </StackPanel>
+        <DockPanel Margin="0,10,0,0" LastChildFill="False" DataContext="{Binding Installation}" 
+                   IsVisible="{Binding !IsInstalling}">
+          <DockPanel.Styles>
+            <Style Selector="Button">
+              <Setter Property="Width" Value="120"/>
+              <Setter Property="Height" Value="40"/>
+              <Setter Property="VerticalContentAlignment" Value="Center"/>
+              <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+          </DockPanel.Styles>
+          <Button IsVisible="{Binding !IsInstalled}" DockPanel.Dock="Right" 
+                  Background="CornflowerBlue" Command="{Binding InstallCommand}" Content="{x:Static locales:Resources.Install}"/>
+          <Button IsVisible="{Binding IsInstalled}" DockPanel.Dock="Left" Background="Salmon"
+                  Command="{Binding UninstallCommand}" Content="{x:Static locales:Resources.Uninstall}" />
+          <Button IsVisible="{Binding IsInstalled}" DockPanel.Dock="Right" 
+                  Command="{Binding RunCommand}" Content="{x:Static locales:Resources.Run}"/>
+          <Button IsVisible="{Binding IsUpdateAvailable}" DockPanel.Dock="Right"
+                  Command="{Binding UpdateCommand}" Content="{x:Static locales:Resources.Update}"/>
+          
+        </DockPanel>
+        <views:InstallationView DataContext="{Binding Installation}"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="0,10" >
+          <StackPanel Orientation="Horizontal" Height="300" Spacing="5" Margin="10">
+            <ItemsControl ItemsSource="{Binding Application.ImageUrls}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="5"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="system:String">
+                  <Image imageLoader:ImageLoader.Source="{Binding}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="200">
+          <StackPanel Margin="20" >
+            <TextBlock TextWrapping="Wrap" Text="{Binding Application.FullDescription}"/>
+          </StackPanel>
+        </ScrollViewer>
+      </StackPanel>
+    </ScrollViewer>
+  </Panel>
+</UserControl>

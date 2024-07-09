@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ZeonStore.ViewModels" xmlns:models="using:ZeonStore.Common"
+             xmlns:views="using:ZeonStore.Views"  
+             xmlns:locales="using:ZeonStore.Desktop.Locales"
+             xmlns:system="using:System" xmlns:asyncImageLoader="using:AsyncImageLoader"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ZeonStore.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+  
+  <DockPanel>
+    <TabControl Padding="0">
+      <TabControl.Styles>
+        <Style Selector="WrapPanel">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+      </TabControl.Styles>
+      <TabItem Header="{x:Static locales:Resources.Apps}">
+          <DockPanel Margin="0,10,0,10">
+            <Panel Width="400" Margin="0,15" DockPanel.Dock="Top">
+              <TextBox Watermark="{x:Static locales:Resources.Search}" Text="{Binding SearchText}" />
+              <Image Source="{SvgImage /Assets/search.svg}" Height="15" 
+                     HorizontalAlignment="Right" Margin="0,0,10,0"/>
+            </Panel>
+            <!--<StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" 
+                        Orientation="Horizontal" Spacing="5">
+              <Button>
+                <Image Source="{SvgImage /Assets/chevron-left.svg}" Width="16"/>
+              </Button>
+              <Button Background="SkyBlue">1</Button>
+              <Button>2</Button>
+              <Button>3</Button>
+              <Button>...</Button>
+              <Button>
+                <Image Source="{SvgImage /Assets/chevron-right.svg}" Width="16"/>
+              </Button>
+            </StackPanel>-->
+            <StackPanel DockPanel.Dock="Top" Margin="25,10" Orientation="Horizontal" Spacing="5">
+              <ToggleButton IsChecked="{Binding !IsGridView}">
+                <Image Height="32">
+                  <Image.Source>
+                    <SvgImage Source="/Assets/list.svg" />
+                  </Image.Source>
+                </Image>
+              </ToggleButton>
+              <ToggleButton IsChecked="{Binding IsGridView}">
+                <Image Height="32">
+                  <Image.Source>
+                    <SvgImage Source="/Assets/grid-3x3-gap-fill.svg" />
+                  </Image.Source>
+                </Image>
+              </ToggleButton>
+            </StackPanel>
+            <ListBox Name="ListBox1" IsVisible="{Binding !IsGridView}" DockPanel.Dock="Top" Margin="25,0" 
+                     ItemsSource="{Binding Applications}" DoubleTapped="ListBox_DoubleTapped">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <Image asyncImageLoader:ImageLoader.Source="{Binding IconUrl}" Height="100"/>
+                      <StackPanel Margin="10" Spacing="5">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding PublisherName}" Foreground="Gray"/>
+                        <TextBlock Text="{Binding ShortDescription}" Margin="0,5"/>
+                        <ItemsControl ItemsSource="{Binding Categories}">
+                          <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                              <StackPanel Orientation="Horizontal" Spacing="5"/>
+                            </ItemsPanelTemplate>
+                          </ItemsControl.ItemsPanel>
+                          <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                              <Border Background="LightGray" Padding="5" CornerRadius="5">
+                                <TextBlock Text="{Binding}" x:DataType="system:String"/>
+                              </Border>
+                            </DataTemplate>
+                          </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                      </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <ScrollViewer IsVisible="{Binding IsGridView}" ScrollChanged="ScrollView_ScrollChanged">
+              <ItemsControl ItemsSource="{Binding Applications}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel HorizontalAlignment="Stretch" Margin="20,0,0,0"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <!--<Border Padding="10" Background="WhiteSmoke" Margin="5" CornerRadius="10">-->
+                    <Button Padding="10" Margin="5" CornerRadius="10"
+                            Command="{Binding $parent.Parent.((vm:MainViewModel)DataContext).OpenCommand}" 
+                            CommandParameter="{Binding}">
+                      <StackPanel>
+                        <Image asyncImageLoader:ImageLoader.Source="{Binding IconUrl}" Height="160"/>
+                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                      </StackPanel>
+                    </Button>
+                    <!--</Border>-->
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </DockPanel>
+      </TabItem>
+      <TabItem Header="{x:Static locales:Resources.Installed}" HorizontalContentAlignment="Left">
+        <ListBox ItemsSource="{Binding Installations}" Margin="10" DoubleTapped="ListBox_DoubleTapped_1">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <DockPanel>
+                <Image DockPanel.Dock="Left" asyncImageLoader:ImageLoader.Source="{Binding Application.IconUrl}" Height="100"/>
+                <Button DockPanel.Dock="Right" Content="{x:Static locales:Resources.Run}" Command="{Binding RunCommand}"/>
+                <Button DockPanel.Dock="Right" Content="{x:Static locales:Resources.Update}" IsVisible="{Binding IsUpdateAvailable}" Command="{Binding UpdateCommand}"/>
+                <StackPanel Margin="10" HorizontalAlignment="Stretch">
+                  <TextBlock Text="{Binding Application.Name}" />
+                  <views:InstallationView/>
+                </StackPanel>
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>
